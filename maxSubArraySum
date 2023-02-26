@@ -1,0 +1,90 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+#define Loma ios_base::sync_with_stdio(0);cin.tie(0);cout.tie(0);
+#define ln "\n"
+#define lli long long int
+#define ull unsigned long long int
+const int mod=1e9+7;
+const int N=2e5+5;
+string ans;
+
+vector<int>findMaxCrossingSubArray(int* a,int low,int mid,int high)
+{
+    int leftSum=INT_MIN,sum=0,maxLeft,rightSum=INT_MIN,maxRight;
+    for(int i=mid;i>=low;i--)
+    {
+        sum+=a[i];
+        if(sum>leftSum)
+        {
+            leftSum=sum;
+            maxLeft=i;
+        }
+    }
+    sum=0;
+    for(int i=mid+1;i<=high;i++)
+    {
+        sum+=a[i];
+        if(sum>rightSum)
+        {
+            rightSum=sum;
+            maxRight=i;
+        }
+    }
+    vector<int>v;
+    v.push_back(maxLeft);
+    v.push_back(maxRight);
+    v.push_back(leftSum+rightSum);
+    return v;
+}
+
+vector<int>findMaximumSubArray(int* a,int low,int high)
+{
+    vector<int>v,bestSubArrayLeft,bestSubArrayRight,bestSubArrayCrossMid;
+    int mid;
+    if(high==low)
+    {
+        v.push_back(low);
+        v.push_back(high);
+        v.push_back(a[low]);
+        return v;
+    }
+    else {
+        mid=(low+high)/2;
+        bestSubArrayLeft=findMaximumSubArray(a,low,mid);
+        bestSubArrayRight=findMaximumSubArray(a,mid+1,high);
+        bestSubArrayCrossMid=findMaxCrossingSubArray(a,low,mid,high);
+        if(bestSubArrayLeft.back()>=bestSubArrayRight.back() && bestSubArrayLeft.back()>=bestSubArrayCrossMid.back())
+        {
+            return bestSubArrayLeft;
+        }
+        else if(bestSubArrayRight.back()>=bestSubArrayLeft.back() && bestSubArrayRight.back()>=bestSubArrayCrossMid.back())
+        {
+            return bestSubArrayRight;
+        }
+        else
+        {
+            return bestSubArrayCrossMid;
+        }
+    }
+}
+
+void solve()
+{
+    int a[]={0,13,-3,-25,20,-3,-16,-23,18,20,-7,12,-5,-22,15,-4,7};
+    vector<int>v=findMaximumSubArray(a,1,16);
+    for(int i=0;i<v.size();i++)
+    {
+        cout<<v[i]<<" ";
+    }
+}
+
+int main()
+{
+    Loma;
+    int t=1;
+    // cin>>t;
+    while(t--)
+        solve();
+    return 0;
+}
